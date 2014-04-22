@@ -11,6 +11,7 @@ function usage($cmd, $err = '') {
 	fprintf(STDERR, "Usages : %s cipher|decipher <password> [input file [output file]]\n", $cmd);
 	fprintf(STDERR, "         %s prng <password> <count>\n", $cmd);
 	fprintf(STDERR, "         %s debug <password>\n", $cmd);
+	fprintf(STDERR, "         %s cycles <password>\n", $cmd);
 	exit(1);
 }
 
@@ -83,7 +84,6 @@ function do_debug($argc, $argv) {
 	
 	$lc = new LCGCipher($password);
 	
-	
 	echo "a         x         c         m\n";
 	
 	for($i = 0, $l = count($lc->generators) ; $i < $l ; $i++) {
@@ -92,6 +92,66 @@ function do_debug($argc, $argv) {
 		     str_pad($lc->generators[$i]->c, 9).' '.
 		     str_pad($lc->generators[$i]->m, 9)."\n";
 	}
+}
+
+function math_gcd($a, $b) {
+	if($a < $b)
+		list($a, $b) = array($b, $a);
+	
+	while($b != 0) {
+		list($a, $b) = array($b, bcmod($a, $b));
+	}
+	
+	return($a);
+}
+
+function do_cycles($argc, $argv) {
+	$password = $argv[2];
+	
+	$lc = new LCGCipher($password);
+	
+	echo "Starting";
+	
+	$cycles = array();
+	for($i = 0, $l = count($lc->generators) ; $i < $l ; $i++) {
+		$first = $lc->generators[$i]->gen();
+		$prev = 0;
+		for($j = 1 ; $j <= $lc->generators[$i]->m ; $j++) {
+			$prev = $lc->generators[$i]->gen();
+			if($first == $prev)
+				break;
+		}
+		
+		if($first != $prev) {
+			$last = $lc->generators[$i]->gen();
+			for($j = 1 ; $j <= $lc->generators[$i]->m ; $j++) {
+				if($last == $lc->generators[$i]->gen())
+					break;
+			}
+		}
+		$cycles[] = ''.$j;
+		echo '.';
+		fflush(STDOUT);
+	}
+	
+	echo "\n";
+	
+	$glob_gcd = 1;
+	for($i = 0 ; $i < count($cycles) - 1 ; $i++) {
+		for($j = $i + 1 ; $j < count($cycles) ; $j++) {
+			$glob_gcd = bcmul($glob_gcd, math_gcd($cycles[$i], $cycles[$j]));
+		}
+	}
+	
+	echo "GCD(".implode(", ", $cycles).") = $glob_gcd\n";
+	
+	$cycle = '1';
+	foreach($cycles as $c)
+		$cycle = bcmul($cycle, $c);
+	
+	$cycle = bcdiv($cycle, $glob_gcd);
+	
+	echo "Cycle: $cycle\n";
 }
 
 if($argc < 2) {
@@ -116,6 +176,12 @@ else if($mode == 'debug') {
 		usage($argv[0]);
 	
 	do_debug($argc, $argv);
+}
+else if($mode == 'cycles') {
+	if($argc != 3)
+		usage($argv[0]);
+	
+	do_cycles($argc, $argv);
 }
 else {
 	usage($argv[0]);
