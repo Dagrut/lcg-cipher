@@ -1,7 +1,12 @@
 CFLAGS=-O3
 LDFLAGS=
 
-all: lcgc
+all: lcgc prime
+
+prime: src/prime.c
+	mkdir -p build
+	gcc $(CFLAGS) -o build/prime.o -c src/prime.c
+	gcc $(LDFLAGS) -lm -o prime build/prime.o
 
 lcgc: build/lcgc.o build/lcg_cipher.o build/sha512.o
 	g++ $(LDFLAGS) -o lcgc build/lcgc.o build/lcg_cipher.o build/sha512.o
