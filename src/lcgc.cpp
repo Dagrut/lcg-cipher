@@ -116,11 +116,11 @@ void do_debug(int argc, char **argv) {
 		exit(1);
 	}
 	
-	printf("a         x         c         m\n");
+	printf("a           x           c           m\n");
 	
 	for(int i = 0, l = lc->generators.size() ; i < l ; i++) {
 		printf(
-			"%-9llu %-9llu %-9llu %-9llu\n",
+			"%-11llu %-11llu %-11llu %-11llu\n",
 			lc->generators[i].a,
 			lc->generators[i].x,
 			lc->generators[i].c,

@@ -84,13 +84,13 @@ function do_debug($argc, $argv) {
 	
 	$lc = new LCGCipher($password);
 	
-	echo "a         x         c         m\n";
+	echo "a           x           c           m\n";
 	
 	for($i = 0, $l = count($lc->generators) ; $i < $l ; $i++) {
-		echo str_pad($lc->generators[$i]->a, 9).' '.
-		     str_pad($lc->generators[$i]->x, 9).' '.
-		     str_pad($lc->generators[$i]->c, 9).' '.
-		     str_pad($lc->generators[$i]->m, 9)."\n";
+		echo str_pad($lc->generators[$i]->a, 11).' '.
+		     str_pad($lc->generators[$i]->x, 11).' '.
+		     str_pad($lc->generators[$i]->c, 11).' '.
+		     str_pad($lc->generators[$i]->m, 11)."\n";
 	}
 }
 
@@ -123,12 +123,14 @@ function do_cycles($argc, $argv) {
 		}
 		
 		if($first != $prev) {
-			$last = $lc->generators[$i]->gen();
+			$first = $lc->generators[$i]->gen();
 			for($j = 1 ; $j <= $lc->generators[$i]->m ; $j++) {
-				if($last == $lc->generators[$i]->gen())
+				$prev = $lc->generators[$i]->gen();
+				if($first == $prev)
 					break;
 			}
 		}
+		$j++;
 		$cycles[] = ''.$j;
 		echo '.';
 		fflush(STDOUT);
