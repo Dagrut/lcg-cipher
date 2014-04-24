@@ -29,7 +29,12 @@ Generate `count` pseudo-random numbers for the given password.
 
 Print the values used for each LCG.
 
-The same arguments can be used with the C++ and php version.
+	php src/lcgc.php cycles <password>
+
+Computes the cycle length of the given password.
+
+The same arguments can be used with the C++ and php version, except for 
+"cycles", which is only in the php version.
 
 Idea
 ----
@@ -53,15 +58,15 @@ The idea is quite simple : We take a password, hash it with a sha512 (the
 one provided by php, and the version I took 
 [here](https://github.com/routar/C-SHA2) for the C++ version), then we split 
 the hash into several parts, each one containing 4 sub-parts. These 4 
-sub-parts are the 4 numbers used to initiate the LCG. The LCG are stored in 
-an array, and when we need a random number, we just have to make the sum of 
-all LCG values.
+sub-parts are 4 numbers used to initiate the LCG. The LCG are stored in an 
+array, and when we need a random number, we just have to make the sum of all 
+LCG values.
 
 When we have to cipher a message, at the very beginning of the message we 
-will add a really random sequence (its size depends of the value given by 
-the internal PRNG), taken from /dev/urandom (and not /dev/random, mainly for 
-speed improvement). It should help making the deciphering harder for an 
-attacker. To see the complete process, look at the `cipher()` function.
+will prepend a really random sequence of 16 bytes, taken from /dev/urandom 
+(and not /dev/random, mainly for speed improvement). It should help making 
+the deciphering harder for an attacker. To see the complete process, look at 
+the `cipher()` function.
 
 The deciphering is almost the same thing. the variables p1 and p2 are just 
 switched since they are generated in a specific order (see the constructors).
@@ -84,8 +89,8 @@ Drawbacks
 
 This algorithm may have several drawbacks :
 * If the LCG input values are not good, the pseudo-random generator cycle may 
-  be too short for some files. However, it seems that with sha512, the 
-  chances that something like this happens are very small.
+  be too short for some files. Using prime numbers as modulos reduce this 
+  probability, but may not completely avoid it.
 * The beginning of the ciphered data is the weakest point of the algorithm,
   that's why a random sequence is added at the beginning of the input. 
   However, if the random number generator does not produce real random 
