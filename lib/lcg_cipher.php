@@ -373,7 +373,7 @@ class LCGCipher {
 		
 		$this->start = true;
 		
-		$this->iv_len = $this->genRand() % 9 + 8;
+		$this->iv_len = 16;
 		$this->iv = file_get_contents("/dev/urandom", false, null, -1, $this->iv_len);
 		assert($this->iv !== false);
 		

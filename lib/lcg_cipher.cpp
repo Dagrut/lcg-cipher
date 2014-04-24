@@ -376,7 +376,6 @@ LCGCipher::LCGCipher(const void *password, size_t length) {
 	
 	std::fstream rnd_file;
 	char rr_tmp[16];
-	const int rnd_cnt = this->genRand() % 9 + 8;
 	
 	rnd_file.open(REAL_RAND_SOURCE, std::ios::in | std::ios::binary);
 	if(!rnd_file.is_open()) {
@@ -385,9 +384,9 @@ LCGCipher::LCGCipher(const void *password, size_t length) {
 		throw error;
 	}
 	
-	this->rr_data_size = rnd_cnt;
-	this->rr_data = new uint8_t[rnd_cnt];
-	rnd_file.get((char*) this->rr_data, rnd_cnt);
+	this->rr_data_size = 16;
+	this->rr_data = new uint8_t[this->rr_data_size];
+	rnd_file.get((char*) this->rr_data, this->rr_data_size);
 	rnd_file.close();
 	
 	this->is_start = true;
