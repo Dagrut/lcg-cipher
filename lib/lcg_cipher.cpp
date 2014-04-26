@@ -446,7 +446,7 @@ void LCGCipher::decipher(const uint8_t *in, int length, std::vector<uint8_t> &ou
 		this->is_start = false;
 		this->decipher(in, size, tmp);
 		if(size < this->rr_data_size) {
-			this->is_start = false;
+			this->is_start = true;
 			this->rr_data_size -= size;
 			return;
 		}

@@ -17,6 +17,7 @@ function usage($cmd, $err = '') {
 
 function do_cipher_decipher($argc, $argv) {
 	$password = $argv[2];
+	$mode = $argv[1];
 	$in_fd = false;
 	$out_fd = false;
 	
@@ -165,7 +166,7 @@ if($mode == 'cipher' || $mode == 'decipher') {
 	if($argc < 3 || $argc > 5)
 		usage($argv[0]);
 	
-	do_cipher_decipher(argc, argv);
+	do_cipher_decipher($argc, $argv);
 }
 else if($mode == 'prng') {
 	if($argc != 4)

@@ -433,7 +433,9 @@ class LCGCipher {
 		
 		if($this->start) {
 			$out = substr($out, $this->iv_len);
-			$this->start = false;
+			$this->iv_len -= strlen($in);
+			if($this->iv_len <= 0)
+				$this->start = false;
 		}
 		
 		return($out);
